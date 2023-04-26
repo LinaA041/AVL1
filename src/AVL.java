@@ -1,3 +1,6 @@
+import java.util.LinkedList;
+import java.util.Queue;
+
 import static java.lang.Math.max;
 
 public class AVL<K extends Comparable<K>> implements Comparable<K> {
@@ -117,73 +120,32 @@ public class AVL<K extends Comparable<K>> implements Comparable<K> {
         return 0;
     }
 
+    public String imprimirPorNiveles() {
 
-    public void imprimirPorNiveles() {
-        imprimirPorNiveles(root);
-    }
-
-
-    private void imprimirPorNiveles(Node<K> node) {
-
-        int max = 0;
-        int nivel = getHeight();
-
-        for (;nivel >= 0; nivel--){
-
-            max += Math.pow(2, nivel);
-
-            max++;
+        if (root == null) {
+            return "";
         }
-        Node cola[] = new Node[max];
 
+        Queue<Node<K>> queue = new LinkedList<>();
+        queue.offer(root);
 
-        cola[1] = node;
-        int x = 1;
+        StringBuilder sb = new StringBuilder();
 
-
-        for (int i = 2; i < max; i += 2, x++) {
-
-            if (cola[x] == null) {
-
-                cola[i] = null;
-                cola[i + 1] = null;
-
-            } else {
-
-                cola[i] = cola[x].getLeft();
-                cola[i + 1] = cola[x].getRight();
+        while (!queue.isEmpty()) {
+            int levelSize = queue.size();
+            for (int i = 0; i < levelSize; i++) {
+                Node<K> node = queue.poll();
+                sb.append(node.getKey()).append(" ");
+                if (node.getLeft() != null) {
+                    queue.offer(node.getLeft());
+                }
+                if (node.getRight() != null) {
+                    queue.offer(node.getRight());
+                }
             }
+            sb.append("\n");
         }
-        nivel = 0;
-        int cont = 0;
-        int cantidad = 1;
-        int ultimaPosicion = 1;
 
-
-        for (int i = 1; i < max; i++) {
-
-            if (i == Math.pow(2, nivel)) {
-
-                System.out.print("\n Nivel " + (nivel) + ": ");
-                nivel++;
-            }
-            if (cola[i] != null) {
-                System.out.print("[" + cola[i].getKey() + "]");
-                cont++;
-            }
-            if (ultimaPosicion == i && cantidad == Math.pow(2, --nivel)) {
-
-                if (cantidad == 1)
-
-                    System.out.print(cont + " (raiz)");
-
-                else
-                    System.out.print(cont);
-
-                cont = 0;
-                cantidad *= 2;
-                ultimaPosicion += (int) Math.pow(2, ++nivel);
-            }
-        }
+        return sb.toString();
     }
 }
